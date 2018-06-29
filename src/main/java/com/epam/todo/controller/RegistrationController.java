@@ -1,20 +1,22 @@
 package com.epam.todo.controller;
 
-import com.epam.todo.entity.Role;
 import com.epam.todo.entity.User;
-import com.epam.todo.repository.UserRepository;
+import com.epam.todo.service.UserService;
+import com.epam.todo.util.ControllerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.Collections;
+import javax.validation.Valid;
 import java.util.Map;
 
 @Controller
 public class RegistrationController {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("/registration")
     public String registration(){
@@ -25,15 +27,22 @@ public class RegistrationController {
     public String about(){return "about";}
 
     @PostMapping("/registration")
-    public String addUser(User user, Map<String, Object> model){
-        User userDb = userRepository.findByUsername(user.getUsername());
-        if (userDb != null){
-            model.put("message", "User exists!");
+    public String addUser(@Valid User user, BindingResult bindingResult, Model model){
+        if (user.getPassword() != null && !user.getPassword().equals(user.getSecondPassword())){
+            model.addAttribute("passwordError", "Passwords are different!");
+        }
+
+        if (bindingResult.hasErrors()){
+            Map<String, String> errors = ControllerUtil.getErrors(bindingResult);
+            model.mergeAttributes(errors);
             return "registration";
         }
-        user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
-        userRepository.save(user);
+        
+        if (!userService.addUser(user)){
+            model.addAttribute("usernameError", "User exists!");
+            return "registration";
+        }
+
         return "redirect:/login";
     }
 }

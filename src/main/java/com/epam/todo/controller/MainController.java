@@ -3,14 +3,17 @@ package com.epam.todo.controller;
 import com.epam.todo.entity.Task;
 import com.epam.todo.entity.User;
 import com.epam.todo.repository.TaskRepository;
+import com.epam.todo.util.ControllerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @Controller
@@ -44,13 +47,22 @@ public class MainController {
     @PostMapping("add")
     public String add(
             @AuthenticationPrincipal User user,
-            @RequestParam String text,
-            @RequestParam String tag, Map<String, Object> model){
+            @Valid Task task,
+            BindingResult bindingResult,
+            Model model){
+        task.setAuthor(user);
 
-        Task task = new Task(text, tag, user);
-        taskRepository.save(task);
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorsMap = ControllerUtil.getErrors(bindingResult);
+
+            model.mergeAttributes(errorsMap);
+            model.addAttribute("task", task);
+        } else {
+            model.addAttribute("task", null);
+            taskRepository.save(task);
+        }
         Iterable<Task> allTasks = taskRepository.findByAuthor(user);
-        model.put("tasks", allTasks);
+        model.addAttribute("tasks", allTasks);
         return "main";
     }
 }

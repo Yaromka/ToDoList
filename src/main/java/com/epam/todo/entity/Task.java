@@ -1,13 +1,20 @@
 package com.epam.todo.entity;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Task {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
+
+    @NotBlank(message = "Please fill task description!")
+    @Length(max = 2048, message = "Description is too long!")
     private String description;
+    @Length(max = 255, message = "Tag is too long!")
     private String tag;
 
     @ManyToOne(fetch = FetchType.EAGER)
