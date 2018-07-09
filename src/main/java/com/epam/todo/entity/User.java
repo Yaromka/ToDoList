@@ -10,19 +10,18 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User implements UserDetails{
+public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotBlank(message = "User name cannot be empty!")
     private String username;
     @NotBlank(message = "Password cannot be empty!")
     private String password;
-    @Transient
-    @NotBlank(message = "Password confirmation cannot be empty!")
-    private String secondPassword;
     private boolean active;
+    private String eMail;
+    private String activationCode;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
@@ -102,11 +101,19 @@ public class User implements UserDetails{
         this.roles = roles;
     }
 
-    public String getSecondPassword() {
-        return secondPassword;
+    public String geteMail() {
+        return eMail;
     }
 
-    public void setSecondPassword(String secondPassword) {
-        this.secondPassword = secondPassword;
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
     }
 }

@@ -29,7 +29,8 @@
         <div class="form-group row">
             <label class="col-sm-2 col-form-label"> Retry password: </label>
             <div class="col-sm-3">
-                <input type="password" name="secondPassword" class="form-control ${(secondPasswordError??)?string('is-invalid', '')}"
+                <input type="password" name="secondPassword"
+                       class="form-control ${(secondPasswordError??)?string('is-invalid', '')}"
                        placeholder="Retype password"/>
             <#if secondPasswordError??>
                 <div class="invalid-feedback">
@@ -38,6 +39,27 @@
             </#if>
             </div>
         </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label"> Email: </label>
+        <div class="col-sm-3">
+            <input type="email" name="eMail"
+                   <#if user??>value="${user.eMail!}</#if>"
+                   class="form-control ${(emailError??)?string('is-invalid', '')}" placeholder="example@some.com"/>
+            <#if mailError??>
+            <div class="invalid-feedback">
+                ${emailError}
+            </div>
+            </#if>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="g-recaptcha" data-sitekey="6LcjImMUAAAAALlOa-F7l29zjEgs9fo5y4Eg_DVZ"></div>
+        <#if captchaError??>
+        <div class="alert alert-danger" role="alert">
+            ${captchaError}
+        </div>
+        </#if>
+    </div>
     </#if>
     <input type="hidden" name="_csrf" value="${_csrf.token}" />
     <#if !isRegisterForm><a href="/registration">Add new user</a></#if>
