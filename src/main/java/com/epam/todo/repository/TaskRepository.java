@@ -11,4 +11,6 @@ import java.util.List;
 public interface TaskRepository extends CrudRepository<Task, Long> {
     List<Task> findByTagAndAuthor(String tag, User user);
     List<Task> findByAuthor(User user);
+    List<Task> findAll();
+    List<Task> findByTag(String tag);
 }

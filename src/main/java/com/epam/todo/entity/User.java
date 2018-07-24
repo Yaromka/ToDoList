@@ -5,20 +5,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
+
+    private static final long serialVersionUID = -4521072621287509879L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
     @NotBlank(message = "User name cannot be empty!")
     private String username;
     @NotBlank(message = "Password cannot be empty!")
     private String password;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private Set<Task> tasks;
     private boolean active;
     private String eMail;
     private String activationCode;
@@ -34,6 +40,10 @@ public class User implements UserDetails {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public boolean isAdmin() {
+        return roles.contains(Role.ADMIN);
     }
 
     public String getUsername() {
@@ -77,11 +87,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -115,5 +125,27 @@ public class User implements UserDetails {
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId());
     }
 }

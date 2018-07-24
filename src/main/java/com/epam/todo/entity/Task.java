@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 public class Task {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Please fill task description!")
     @Length(max = 2048, message = "Description is too long!")
@@ -47,11 +47,11 @@ public class Task {
         this.description = description;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
